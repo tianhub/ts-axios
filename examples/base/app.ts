@@ -9,12 +9,14 @@ axios({
   }
 })
 
-const arr = new Int32Array([20, 31]);
+const arr = new Int32Array([20, 31])
 
 axios({
   method: 'post',
   url: '/base/buffer',
-  data: arr
+  data: arr,
+}).then(res => {
+  console.log(res, 'rsessssss')
 })
 
 axios({
@@ -22,22 +24,15 @@ axios({
   url: '/base/post',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json, text/plain, */*',
+    'Accept': 'application/json, text/plain, */*'
   },
   data: {
     a: 1,
     b: 3
   }
+}).then(res => {
+  console.log(res, 'ressssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss')
 })
-
-// const searchParamsString = 'q=whoami&source=baidu'
-// const searchParams = new URLSearchParams(searchParamsString)
-//
-// axios({
-//   method: 'post',
-//   url: '/base/post',
-//   data: searchParams
-// })
 
 const paramsString = 'q=URLUtils.searchParams&topic=api'
 const searchParams = new URLSearchParams(paramsString)

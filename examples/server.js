@@ -4,7 +4,6 @@ const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')
-const path = require('path')
 
 const app = express()
 const compiler = webpack(WebpackConfig)
@@ -28,6 +27,7 @@ app.use(express.static(__dirname, {
 app.use(bodyParser.json())
 // app.use(bodyParser.text())
 app.use(bodyParser.urlencoded({ extended: true }))
+
 
 const router = express.Router()
 
@@ -114,32 +114,50 @@ function registerExtendRouter () {
   })
 
   router.options('/extend/options', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.end()
   })
 
   router.delete('/extend/delete', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.end()
   })
 
   router.head('/extend/head', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.end()
   })
 
   router.post('/extend/post', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.json(req.body)
   })
 
   router.put('/extend/put', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.json(req.body)
   })
 
   router.patch('/extend/patch', function(req, res) {
+    res.json({
+      msg: 'hello world'
+    })
     res.json(req.body)
   })
 
   router.get('/extend/user', function(req, res) {
     res.json({
-      code: 0,
+      code: 200,
       message: 'ok',
       result: {
         name: 'jack',
@@ -184,6 +202,7 @@ function registerMoreRouter () {
     console.log(req.body, req.files)
     res.end('upload success!')
   })
+
 
   router.get('/more/304', function(req, res) {
     res.status(304)

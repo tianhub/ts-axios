@@ -45,16 +45,12 @@ const mergeConfig = function(config1: AxiosRequestConfig, config2: AxiosRequestC
   const config = Object.create(null)
 
   for (let key in config2) {
-    if (config2.hasOwnProperty(key)) {
-      mergeField(key)
-    }
+    mergeField(key)
   }
 
   for (let key in config1) {
-    if (config1.hasOwnProperty(key)) {
-      if (!config2[key]) {
-        mergeField(key)
-      }
+    if (!config2[key]) {
+      mergeField(key)
     }
   }
 

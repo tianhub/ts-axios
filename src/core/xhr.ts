@@ -5,7 +5,15 @@ import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise(((resolve, reject) => {
-    const { data = null, headers, method = 'get', url, responseType, timeout = 0 } = config
+    const {
+      data = null,
+      headers,
+      method = 'get',
+      url,
+      responseType,
+      timeout = 0,
+      cancelToken
+    } = config
     const request = new XMLHttpRequest()
     request.open(method.toUpperCase(), url!, true)
 
@@ -46,7 +54,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     }
 
     request.ontimeout = function handleTimeout() {
-      reject(createError(`timeout of ${timeout} ms exceeded`, config, 'ECONNABORTED', request));
+      reject(createError(`timeout of ${timeout} ms exceeded`, config, 'ECONNABORTED', request))
     }
 
     Object.keys(headers).forEach(name => {
@@ -57,13 +65,20 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
     })
 
+    if (cancelToken) {
+      cancelToken.promise.then(reason => {
+        request.abort()
+        reject(reason)
+      })
+    }
+
     request.send(data)
 
     function handleResponse(response: AxiosResponse): void {
       if (response.status >= 200 && response.status < 300) {
-        resolve(response);
+        resolve(response)
       } else {
-        reject(createError(`http code ${response.status} happened`, config, null, request, response));
+        reject(createError(`http code ${response.status} happened`, config, null, request, response))
       }
     }
   }))

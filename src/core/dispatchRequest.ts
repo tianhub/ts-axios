@@ -4,19 +4,12 @@ import { buildUrl } from '../helpers/url'
 import { flattenHeaders } from '../helpers/headers'
 import transform from './transform'
 
-export default function dispatchRequest(config: AxiosRequestConfig):AxiosPromise  {
+export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  throwIfCancellationRequest(config)
   processConfig(config)
-  return xhr(config).then(
-    res => {
-      return transformResponseData(res)
-    },
-    e => {
-      if (e && e.response) {
-        e.response = transformResponseData(e.response)
-      }
-      return Promise.reject(e)
-    }
-  )
+  return xhr(config).then(res => {
+    return transformResponseData(res)
+  })
 }
 
 function processConfig(config: AxiosRequestConfig): void {
@@ -26,11 +19,17 @@ function processConfig(config: AxiosRequestConfig): void {
 }
 
 function transformURL(config: AxiosRequestConfig): string {
-  const { url, param } = config;
-  return buildUrl(url!, param);
+  const { url, param } = config
+  return buildUrl(url!, param)
 }
 
 function transformResponseData(res: AxiosResponse): AxiosResponse {
   res.data = transform(res.data, res.headers, res.config.transformResponse)
   return res
+}
+
+function throwIfCancellationRequest(config: AxiosRequestConfig): void {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested()
+  }
 }

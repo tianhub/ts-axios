@@ -20,7 +20,8 @@ const defaults: AxiosRequestConfig = {
     function(data: any, headers: any): any {
       return transformResponse(data)
     }
-  ]
+  ],
+  withCredentials: false,
 }
 
 const methodNoData = ['get', 'delete', 'options', 'head']

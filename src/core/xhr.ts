@@ -12,7 +12,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       url,
       responseType,
       timeout = 0,
-      cancelToken
+      cancelToken,
+      withCredentials,
     } = config
     const request = new XMLHttpRequest()
     request.open(method.toUpperCase(), url!, true)
@@ -24,6 +25,10 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     if (timeout) {
       request.timeout = timeout
+    }
+
+    if (withCredentials) {
+      request.withCredentials = true
     }
 
     request.onreadystatechange = () => {
@@ -43,7 +48,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         statusText: request.statusText,
         headers,
         config,
-        request
+        request,
       }
       handleResponse(response)
 

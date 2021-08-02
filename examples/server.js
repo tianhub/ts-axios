@@ -1,9 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const multipart = require('connect-multiparty')
+const atob = require('atob')
 const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')
+const path = require('path')
+
+require('./server2')
 
 const app = express()
 const compiler = webpack(WebpackConfig)
@@ -27,7 +33,11 @@ app.use(express.static(__dirname, {
 app.use(bodyParser.json())
 // app.use(bodyParser.text())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cookieParser())
 
+app.use(multipart({
+  uploadDir: path.resolve(__dirname, 'upload-file')
+}))
 
 const router = express.Router()
 
@@ -49,7 +59,7 @@ registerMoreRouter()
 
 app.use(router)
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8085
 module.exports = app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}, Ctrl+C to stop`)
 })
@@ -114,50 +124,32 @@ function registerExtendRouter () {
   })
 
   router.options('/extend/options', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.end()
   })
 
   router.delete('/extend/delete', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.end()
   })
 
   router.head('/extend/head', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.end()
   })
 
   router.post('/extend/post', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.json(req.body)
   })
 
   router.put('/extend/put', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.json(req.body)
   })
 
   router.patch('/extend/patch', function(req, res) {
-    res.json({
-      msg: 'hello world'
-    })
     res.json(req.body)
   })
 
   router.get('/extend/user', function(req, res) {
     res.json({
-      code: 200,
+      code: 0,
       message: 'ok',
       result: {
         name: 'jack',
@@ -203,6 +195,18 @@ function registerMoreRouter () {
     res.end('upload success!')
   })
 
+  router.post('/more/post', function(req, res) {
+    const auth = req.headers.authorization
+    const [type, credentials] = auth.split(' ')
+    console.log(atob(credentials))
+    const [username, password] = atob(credentials).split(':')
+    if (type === 'Basic' && username === 'Yee' && password === '123456') {
+      res.json(req.body)
+    } else {
+      res.status(401)
+      res.end('UnAuthorization')
+    }
+  })
 
   router.get('/more/304', function(req, res) {
     res.status(304)

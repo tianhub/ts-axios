@@ -12,7 +12,7 @@ import axios, { AxiosError } from '../../src/index'
 // axios({
 //   method: 'get',
 //   url: '/error/get',
-//   param: {
+//   params: {
 //     a: 1,
 //     b: 2
 //   }

@@ -6,9 +6,8 @@ import {
   RejectedFn,
   ResolvedFn
 } from '../types'
-import dispatchRequest from './dispatchRequest'
+import dispatchRequest, { transformURL } from './dispatchRequest'
 import InterceptorManager from './InterceptorManager'
-import { deepMerge } from '../helpers/util'
 import mergeConfig from './mergeConfig'
 
 interface Interceptors {
@@ -18,7 +17,7 @@ interface Interceptors {
 
 interface PromiseChain<T> {
   resolved: ResolvedFn<T>
-  rejected?:  RejectedFn
+  rejected?: RejectedFn
 }
 
 export class Axios {
@@ -26,44 +25,46 @@ export class Axios {
   interceptors: Interceptors
 
   constructor(initConfig: AxiosRequestConfig) {
-    this.defaults = initConfig;
+    this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
       response: new InterceptorManager<AxiosResponse>()
-    };
+    }
   }
 
   request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
-      config = config ? config : {};
-      config.url = url;
+      config = config ? config : {}
+      config.url = url
     } else {
-      config = url;
+      config = url
     }
 
-    config = mergeConfig(this.defaults, config);
+    config = mergeConfig(this.defaults, config)
 
-    const chain: PromiseChain<any>[] = [{
-      resolved: dispatchRequest,
-      rejected: undefined
-    }]
+    const chain: PromiseChain<any>[] = [
+      {
+        resolved: dispatchRequest,
+        rejected: undefined
+      }
+    ]
 
     this.interceptors.request.forEach(interceptor => {
-      chain.unshift(interceptor);
+      chain.unshift(interceptor)
     })
 
     this.interceptors.response.forEach(interceptor => {
-      chain.push(interceptor);
+      chain.push(interceptor)
     })
 
-    let promise = Promise.resolve(config);
+    let promise = Promise.resolve(config)
 
-    while(chain.length) {
-      const { resolved, rejected } = chain.shift()!;
+    while (chain.length) {
+      const { resolved, rejected } = chain.shift()!
       promise = promise.then(resolved, rejected)
     }
 
-    return promise;
+    return promise
   }
 
   get(url: string, config?: AxiosRequestConfig): AxiosPromise {
@@ -94,11 +95,22 @@ export class Axios {
     return this._requestMethodWithData('put', url, data, config)
   }
 
-  _requestMethodWithoutData(method: Method, url: string, config?: AxiosRequestConfig): AxiosPromise {
-    return this.request(Object.assign(config || {}, {
-      method,
-      url
-    }))
+  _requestMethodWithoutData(
+    method: Method,
+    url: string,
+    config?: AxiosRequestConfig
+  ): AxiosPromise {
+    return this.request(
+      Object.assign(config || {}, {
+        method,
+        url
+      })
+    )
+  }
+
+  getUri(config: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config)
+    return transformURL(config)
   }
 
   _requestMethodWithData(
@@ -107,10 +119,12 @@ export class Axios {
     data?: any,
     config?: AxiosRequestConfig
   ): AxiosPromise {
-    return this.request(Object.assign(config || {}, {
-      method,
-      url,
-      data
-    }))
+    return this.request(
+      Object.assign(config || {}, {
+        method,
+        url,
+        data
+      })
+    )
   }
 }

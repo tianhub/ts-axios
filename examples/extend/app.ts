@@ -3,7 +3,7 @@ import axios from '../../src/index'
 // axios({
 //   method: 'get',
 //   url: '/extend/get?c=3',
-//   param: {
+//   params: {
 //     a: 1,
 //     b: 2
 //   }
@@ -11,7 +11,7 @@ import axios from '../../src/index'
 //
 // axios.request({
 //   url: '/extend/get',
-//   param: {
+//   params: {
 //     request: true
 //   },
 // })

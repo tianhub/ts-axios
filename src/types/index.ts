@@ -27,6 +27,16 @@ export interface AxiosRequestConfig {
   cancelToken?: CancelToken
   withCredentials?: boolean
 
+  xsrfCookieName?: string
+  xsrfHeaderName?: string
+
+  onDownloadProgress?: (e: ProgressEvent) => void
+  onUploadProgress?: (e: ProgressEvent) => void
+
+  auth?: AxiosBasicCredentials
+
+  validateStatus?: (status: number) => boolean
+
   [propName: string]: any
 }
 
@@ -39,8 +49,7 @@ export interface AxiosResponse<T = any> {
   request: any
 }
 
-export interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {
-}
+export interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {}
 
 export interface AxiosError {
   message: string
@@ -54,9 +63,9 @@ export interface AxiosError {
 export interface Axios {
   defaults: AxiosRequestConfig
   interceptors: {
-    request: AxiosInterceptorManager<AxiosRequestConfig>,
+    request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
-  },
+  }
 
   request<T>(config: AxiosRequestConfig): AxiosPromise<T>
 
@@ -88,7 +97,7 @@ export interface AxiosStatic extends AxiosInstance {
 
   Cancel: CancelStatic
 
-  isCancel:(val: any) => boolean
+  isCancel: (val: any) => boolean
 }
 
 export interface AxiosInterceptorManager<T> {
@@ -113,7 +122,7 @@ export interface CancelToken {
   promise: Promise<Cancel>
   reason?: Cancel
 
-  throwIfRequested( ): void
+  throwIfRequested(): void
 }
 
 export interface Canceler {
@@ -130,7 +139,7 @@ export interface CancelTokenSource {
 }
 
 export interface CancelTokenStatic {
-  new(executor: CancelExecutor): CancelToken
+  new (executor: CancelExecutor): CancelToken
 
   source(): CancelTokenSource
 }
@@ -140,6 +149,10 @@ export interface Cancel {
 }
 
 export interface CancelStatic {
-  new(message: string): Cancel
+  new (message: string): Cancel
 }
 
+export interface AxiosBasicCredentials {
+  username: string
+  password: string
+}

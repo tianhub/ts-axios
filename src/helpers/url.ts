@@ -1,5 +1,10 @@
 import { isDate, isPlainObject } from './util'
 
+interface URLOrigin {
+  protocol: string
+  port: string
+}
+
 function encode(val: string): string {
   return encodeURIComponent(val)
     .replace(/%40/g, '@')
@@ -18,7 +23,7 @@ export function buildUrl(url: string, params?: any): string {
 
   const parts: string[] = []
 
-  Object.keys(params).forEach((key) => {
+  Object.keys(params).forEach(key => {
     const val = params[key]
     if (val === null || typeof val === 'undefined') {
       return
@@ -31,7 +36,7 @@ export function buildUrl(url: string, params?: any): string {
       values = [val]
     }
 
-    values.forEach((val) => {
+    values.forEach(val => {
       if (isDate(val)) {
         val = val.toISOString()
       } else if (isPlainObject(val)) {
@@ -47,8 +52,27 @@ export function buildUrl(url: string, params?: any): string {
       url = url.slice(0, markIndex)
     }
     // url = url.concat(url.indexOf('?') === -1 ? '?' : '' + serializedParams)
-    url += (url.indexOf('?') === -1 ? '?' : '&' + serializedParams)
+    url += url.indexOf('?') === -1 ? '?' : '&' + serializedParams
   }
 
   return url
+}
+
+export function isURLSameOrigin(requestUrl: string): boolean {
+  const parsedOrigin = resolveURL(requestUrl)
+  return (
+    parsedOrigin.protocol === currentOrigin.protocol && parsedOrigin.port === currentOrigin.port
+  )
+}
+
+const urlParsingNode = document.createElement('a')
+const currentOrigin = resolveURL(window.location.href)
+
+function resolveURL(url: string): URLOrigin {
+  urlParsingNode.setAttribute('href', url)
+  const { protocol, port } = urlParsingNode
+  return {
+    protocol,
+    port
+  }
 }

@@ -31,13 +31,16 @@ stratKeyFormVal2.forEach(key => {
   strats[key] = fromVal2Strat
 })
 
-const stratDeepMerge = ['headers']
+const stratDeepMerge = ['headers', 'auth']
 
 stratDeepMerge.forEach(key => {
   strats[key] = deepMergeStrat
 })
 
-const mergeConfig = function(config1: AxiosRequestConfig, config2: AxiosRequestConfig = {}): AxiosRequestConfig {
+const mergeConfig = function(
+  config1: AxiosRequestConfig,
+  config2: AxiosRequestConfig = {}
+): AxiosRequestConfig {
   if (!config2) {
     config2 = {}
   }

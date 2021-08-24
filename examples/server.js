@@ -26,7 +26,7 @@ app.use(webpackHotMiddleware(compiler))
 
 app.use(express.static(__dirname, {
   setHeaders (res) {
-    res.cookie('XSRF-TOKEN-D', '1234abc')
+    res.cookie('XSRF-TOKEN-TIAN', 'abcd1234')
   }
 }))
 
@@ -200,7 +200,8 @@ function registerMoreRouter () {
     const [type, credentials] = auth.split(' ')
     console.log(atob(credentials))
     const [username, password] = atob(credentials).split(':')
-    if (type === 'Basic' && username === 'Yee' && password === '123456') {
+    console.log(type, username, password)
+    if (type === 'Basic' && username === 'Tian' && password === '123456') {
       res.json(req.body)
     } else {
       res.status(401)
